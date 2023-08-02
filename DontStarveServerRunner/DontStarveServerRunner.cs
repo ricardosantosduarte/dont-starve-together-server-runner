@@ -14,12 +14,9 @@ namespace DontStarveServerRunner
 {
     public partial class DontStarveServerRunner : Form
     {
-        public DontStarveServerRunner()
-        {
-            InitializeComponent();
-            labelServerStatus.Text = "Offline";
-            labelServerStatus.ForeColor = Color.Red;
-        }
+        private List<Process> shards;
+        private int numberOfShards;
+        private bool isOnline;
 
         [DllImport("user32.dll")]
         internal static extern IntPtr SetForegroundWindow(IntPtr hWnd);
@@ -33,44 +30,108 @@ namespace DontStarveServerRunner
         [DllImport("kernel32.dll")]
         static extern bool FreeConsole();
 
+        public DontStarveServerRunner()
+        {
+            InitializeComponent();
+            this.shards = new List<Process>();
+            this.numberOfShards = 0;
+            this.isOnline = false;
+
+            this.setOfflineLabels();
+
+            this.getAllServerShards();
+
+            if (this.isOnline == true)
+            {
+                this.setOnlineLabels();
+            }
+        }
+
+        private void setOnlineLabels()
+        {
+            labelServerStatus.Text = "Online";
+            labelServerStatus.ForeColor = Color.YellowGreen;
+        }
+
+        private void setOfflineLabels()
+        {
+            labelServerStatus.Text = "Offline";
+            labelServerStatus.ForeColor = Color.Red;
+        }
+
+        private void getAllServerShards()
+        {
+            List<Process> processRunning = Process.GetProcesses().ToList();
+            List<Process> temp = new List<Process>();
+
+            foreach (Process pr in processRunning)
+                if (pr.ProcessName.Equals("dontstarve_dedicated_server_nullrenderer_x64") || pr.ProcessName.Equals("dontstarve_dedicated_server_nullrenderer"))
+                    temp.Add(pr);
+
+            this.shards = temp;
+            this.numberOfShards = this.shards.Count;
+
+            if (this.numberOfShards == 0)
+                this.isOnline = false;
+            else
+                this.isOnline = true;
+        }
+
         private void buttonStartServer_Click(object sender, EventArgs e)
         {
             try
             {
-                Process process = Process.Start("C:\\Users\\ricar\\Documents\\Klei\\DoNotStarveTogether\\StartDSTServer.bat");
+                this.getAllServerShards();
+
+                if (this.isOnline == true)
+                {
+                    MessageBox.Show("Server already online");
+                    return;
+                }
+
+                Process process = Process.Start($"{Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)}\\Klei\\DoNotStarveTogether\\StartDSTServer.bat");
                 process.WaitForExit();
 
-                labelServerStatus.Text = "Online";
-                labelServerStatus.ForeColor = Color.YellowGreen;
+                this.setOnlineLabels();
             } catch (Exception)
             {
-                labelServerStatus.Text = "Offline";
-                labelServerStatus.ForeColor = Color.Red;
+                this.setOfflineLabels();
             }
         }
 
         private void buttonStopServer_Click(object sender, EventArgs e)
         {
-            IntPtr hWnd; //change this to IntPtr
-            Process[] processRunning = Process.GetProcesses();
-            foreach (Process pr in processRunning)
-            {
-                if (pr.ProcessName == "dontstarve_dedicated_server_nullrenderer_x64")
-                {
-                    try
-                    {
-                        hWnd = pr.MainWindowHandle; //use it as IntPtr not int
-                        ShowWindow(hWnd, 3);
-                        SetForegroundWindow(hWnd);
+            IntPtr hWnd;
 
-                        SendKeys.Send("c_shutdown{(}{)}{ENTER}");
-                        SendKeys.Flush();
-                    } finally
-                    {
-                        labelServerStatus.Text = "Offline";
-                        labelServerStatus.ForeColor = Color.Red;
-                    }
+            this.getAllServerShards();
+
+            foreach (Process shard in shards)
+            {
+                try
+                {
+                    hWnd = shard.MainWindowHandle;
+                    ShowWindow(hWnd, 3);
+                    SetForegroundWindow(hWnd);
+
+                    SendKeys.Send("c_shutdown{(}{)}{ENTER}");
+                    SendKeys.Flush();
+
+                    shard.WaitForExit();
+                    this.numberOfShards--;
+                } 
+                catch {
+                    MessageBox.Show("Error closing server, please shut it down manually!");
                 }
+            }
+
+            if (numberOfShards == 0)
+            {
+                this.setOfflineLabels();
+            }
+            else
+            {
+                labelServerStatus.Text = "Error closing the server";
+                labelServerStatus.ForeColor = Color.Orange;
             }
         }
     }
