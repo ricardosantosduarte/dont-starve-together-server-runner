@@ -29,6 +29,7 @@ namespace DontStarveServerRunner
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DontStarveServerRunner));
             this.buttonStartServer = new System.Windows.Forms.Button();
             this.buttonStopServer = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -164,8 +165,10 @@ namespace DontStarveServerRunner
             this.Controls.Add(this.buttonStopServer);
             this.Controls.Add(this.buttonStartServer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "DontStarveServerRunner";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Dont Starve Together Server Runner";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

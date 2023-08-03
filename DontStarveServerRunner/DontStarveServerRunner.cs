@@ -110,6 +110,12 @@ namespace DontStarveServerRunner
         {
             try
             {
+                if (!File.Exists(this.serverLocation))
+                {
+                    MessageBox.Show("Unable to locate server");
+                    return;
+                }
+
                 this.getAllServerShards();
 
                 if (this.isOnline == true)
