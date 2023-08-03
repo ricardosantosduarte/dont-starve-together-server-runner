@@ -1,4 +1,4 @@
-# Dont Starve Together Dedicater Server Runner
+# Dont Starve Together Dedicated Server Runner
 
 ### Hello everyone, this is a simple application to manage a dedicated server for Don't Starve Together.
 
@@ -10,7 +10,7 @@
 
 ```This is a fan-made project. I like to host my own DST servers and I wanted to make it easier for me to manage it.```
 
-```Because I don't have any certificate, when running the app Windows will probably block it. If you don't trust me, you can check the code yourself.```
+```Because I don't have any certificate, when running the app, Windows will probably block it. If you don't trust me, you can check the code yourself.```
 
 ---
 
