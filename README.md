@@ -41,3 +41,9 @@ c_shutdown()
 ```
 in all the processes that have in their name, either `dontstarve_dedicated_server_nullrenderer_x64` or `dontstarve_dedicated_server_nullrenderer` so all the progress is saved and it will update the status of the server in the application.
 
+---
+
+This is what the application looks like in v1.0.0
+
+![image](https://github.com/ricardosantosduarte/dont-starve-together-server-runner/assets/47739966/de07e27b-05b6-4db2-b838-defc17f08d47)
+
